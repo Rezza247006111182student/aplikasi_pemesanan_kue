@@ -114,7 +114,8 @@ include 'includes/header.php';
                                     <img src='images/${kue.gambar}' alt='${kue.nama}' class='w-full aspect-square object-cover'>
                                     <div class='p-6 flex-1 flex flex-col'>
                                         <h3 class='text-xl font-semibold text-gray-800 mb-2'>${kue.nama}</h3>
-                                        <p class='text-gray-600 mb-4'>${kue.deskripsi}</p>
+                                        <p class='text-gray-600 mb-2 line-clamp-3'>${kue.deskripsi}</p>
+                                        <button onclick="showDescriptionModal('${kue.nama}', '${kue.deskripsi.replace(/'/g, "\\'\'")}')" class='text-blue-600 hover:text-blue-800 text-sm font-medium mb-4 text-align-left'>Lihat Selengkapnya →</button>
                                         <div class='flex justify-between items-center mt-auto'>
                                             <span class='text-2xl font-bold text-purple-600'>Rp ${kue.harga_formatted}</span>
                                             <span class='text-sm text-gray-500'>Stok: ${kue.stok}</span>
@@ -153,6 +154,23 @@ include 'includes/header.php';
                 }
             });
         }
+
+        function showDescriptionModal(nama, deskripsi) {
+            $('#modal-title').text(nama);
+            $('#modal-description').text(deskripsi);
+            $('#description-modal').removeClass('hidden');
+        }
+
+        function closeDescriptionModal() {
+            $('#description-modal').addClass('hidden');
+        }
+
+        $(document).click(function(e) {
+            var modal = $('#description-modal');
+            if (e.target == modal[0]) {
+                closeDescriptionModal();
+            }
+        });
 
         function addToCart(kueId) {
             if (!isLoggedIn) {
@@ -248,4 +266,19 @@ include 'includes/header.php';
             $('#error-modal').addClass('hidden');
         }
     </script>
+
+    <!-- Description Modal -->
+    <div id='description-modal' class='hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+        <div class='bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-lg'>
+            <div class='flex justify-between items-start'>
+                <h3 id='modal-title' class='text-xl font-bold text-gray-800'></h3>
+                <button onclick='closeDescriptionModal()' class='text-gray-500 hover:text-gray-700 text-2xl'>&times;</button>
+            </div>
+            <p id='modal-description' class='text-gray-600 mt-4 whitespace-pre-wrap'></p>
+            <button onclick='closeDescriptionModal()' class='mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300'>
+                Tutup
+            </button>
+        </div>
+    </div>
+
 <?php include 'includes/footer.php'; ?>
