@@ -43,22 +43,3 @@ CREATE TABLE IF NOT EXISTS detail_pesanan (
     FOREIGN KEY (pesanan_id) REFERENCES pesanan(id),
     FOREIGN KEY (kue_id) REFERENCES kue(id)
 );
-
--- Insert data contoh untuk kue
--- INSERT INTO kue (nama, deskripsi, harga, gambar, stok) VALUES
--- ('Kue Tart', 'Kue tart manis dengan berbagai rasa', 25000, 'tart.jpg', 10),
--- ('Kue Brownies', 'Brownies coklat lembut', 30000, 'brownies.jpg', 15),
--- ('Kue Lapis', 'Kue lapis legit tradisional', 35000, 'lapis.jpg', 8);
-
--- Insert user admin contoh (password: admin123)
--- INSERT INTO users (username, email, password, role) VALUES
--- ('admin', 'admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'); -- password_hash('admin123', PASSWORD_DEFAULT)
-
---
--- Untuk mengosongkan semua data kecuali daftar kue, jalankan skrip PHP
--- reset_records.php yang ada di root proyek:
---     php reset_records.php
--- Skrip akan melakukan TRUNCATE pada setiap tabel selain 'kue' dan
--- mengatur ulang auto_increment. Gunakan ini saat Anda ingin memulai
--- ulang sistem dengan hanya menyimpan katalog kue.
---

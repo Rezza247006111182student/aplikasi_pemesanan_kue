@@ -21,11 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
                 $gambar = basename($_FILES["gambar"]["name"]);
             } else {
-                echo "Sorry, there was an error uploading your file.";
+                echo "Terjadi error ketika mengirimkankan file";
                 exit();
             }
         } else {
-            echo "File is not an image.";
+            echo "File yang kamu kirim bukan gambar";
             exit();
         }
     }

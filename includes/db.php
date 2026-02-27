@@ -1,8 +1,8 @@
 <?php
 // Koneksi ke database
 $host = 'localhost';
-$user = 'root'; // Ganti dengan username database Anda
-$pass = ''; // Ganti dengan password database Anda
+$user = 'root'; 
+$pass = ''; 
 $dbname = 'aplikasi_pemesanan_kue';
 
 $conn = new mysqli($host, $user, $pass, $dbname);

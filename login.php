@@ -46,7 +46,6 @@
 
                     if ($result->num_rows == 1) {
                         $user = $result->fetch_assoc();
-                        // Asumsikan password sudah di-hash dengan password_hash()
                         if (password_verify($password, $user['password'])) {
                             $_SESSION['user_id'] = $user['id'];
                             $_SESSION['username'] = $username;
