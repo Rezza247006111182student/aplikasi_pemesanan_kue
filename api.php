@@ -14,6 +14,12 @@ $base = rtrim($scriptName, '/');
 $path = preg_replace('#^' . preg_quote($base) . '#', '', $path);
 $path = ltrim($path, '/');
 
+if (strpos($path, 'api.php/') === 0) {
+    $path = substr($path, strlen('api.php/'));
+} elseif ($path === 'api.php') {
+    $path = '';
+}
+
 $segments = explode('/', $path);
 // expect api/v1/... -> segments[0]=api, [1]=v1, [2]=resource
 if (count($segments) < 3 || $segments[0] !== 'api' || $segments[1] !== 'v1') {

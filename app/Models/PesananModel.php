@@ -6,18 +6,31 @@ class PesananModel extends Model {
         // $items = [ ['kue_id'=>..,'quantity'=>..], ... ]
         $this->db->begin_transaction();
         try {
-            $stmt = $this->db->prepare("INSERT INTO pesanan (user_id, status, created_at) VALUES (?, 'pending', NOW())");
+            $total = 0;
+
+            $stmt = $this->db->prepare("INSERT INTO pesanan (user_id, total, status) VALUES (?, 0, 'pending')");
             $stmt->bind_param('i', $userId);
             $stmt->execute();
             $pesanan_id = $stmt->insert_id;
             $stmt->close();
 
-            $detailStmt = $this->db->prepare("INSERT INTO detail_pesanan (pesanan_id, kue_id, quantity) VALUES (?, ?, ?)");
+            $priceStmt = $this->db->prepare("SELECT harga FROM kue WHERE id = ? LIMIT 1");
+            $detailStmt = $this->db->prepare("INSERT INTO detail_pesanan (pesanan_id, kue_id, quantity, harga) VALUES (?, ?, ?, ?)");
             $stockStmt = $this->db->prepare("UPDATE kue SET stok = stok - ? WHERE id = ? AND stok >= ?");
             foreach ($items as $it) {
                 $kid = (int)$it['kue_id'];
                 $qty = (int)$it['quantity'];
                 if ($qty < 1) throw new Exception('Quantity harus >= 1');
+
+                $priceStmt->bind_param('i', $kid);
+                $priceStmt->execute();
+                $priceRes = $priceStmt->get_result();
+                $kue = $priceRes->fetch_assoc();
+                if (!$kue) {
+                    throw new Exception('Kue tidak ditemukan: ' . $kid);
+                }
+                $harga = (float)$kue['harga'];
+
                 // decrement stock
                 $stockStmt->bind_param('iii', $qty, $kid, $qty);
                 $stockStmt->execute();
@@ -25,11 +38,20 @@ class PesananModel extends Model {
                     throw new Exception('Stok tidak cukup untuk kue ' . $kid);
                 }
                 // insert detail
-                $detailStmt->bind_param('iii', $pesanan_id, $kid, $qty);
+                $detailStmt->bind_param('iiid', $pesanan_id, $kid, $qty, $harga);
                 $detailStmt->execute();
+
+                $total += $harga * $qty;
             }
+            $priceStmt->close();
             $detailStmt->close();
             $stockStmt->close();
+
+            $updateTotalStmt = $this->db->prepare("UPDATE pesanan SET total = ? WHERE id = ?");
+            $updateTotalStmt->bind_param('di', $total, $pesanan_id);
+            $updateTotalStmt->execute();
+            $updateTotalStmt->close();
+
             $this->db->commit();
             return $pesanan_id;
         } catch (Exception $e) {

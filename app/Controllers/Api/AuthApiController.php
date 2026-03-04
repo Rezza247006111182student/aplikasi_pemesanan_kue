@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/BaseApiController.php';
 require_once __DIR__ . '/../../Models/TokenModel.php';
+require_once __DIR__ . '/../../Middleware/ApiAuth.php';
 
 class AuthApiController extends BaseApiController {
     public function login() {
@@ -40,9 +41,8 @@ class AuthApiController extends BaseApiController {
     }
 
     public function logout() {
-        $authHeader = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : '';
-        if (strpos($authHeader, 'Bearer ') === 0) {
-            $token = substr($authHeader, 7);
+        $token = ApiAuth::getBearerToken();
+        if ($token) {
             $tm = new TokenModel();
             $tm->revokeToken($token);
             return $this->json(['message' => 'Logged out']);

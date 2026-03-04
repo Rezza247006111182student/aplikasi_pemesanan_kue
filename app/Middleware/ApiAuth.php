@@ -2,10 +2,36 @@
 require_once __DIR__ . '/../Models/TokenModel.php';
 
 class ApiAuth {
+    public static function getBearerToken() {
+        $authHeader = '';
+
+        if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+        } elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } elseif (function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            if (is_array($headers)) {
+                foreach ($headers as $key => $value) {
+                    if (strtolower($key) === 'authorization') {
+                        $authHeader = $value;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (stripos($authHeader, 'Bearer ') !== 0) {
+            return null;
+        }
+
+        $token = trim(substr($authHeader, 7));
+        return $token !== '' ? $token : null;
+    }
+
     public static function user() {
-        $authHeader = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : '';
-        if (strpos($authHeader, 'Bearer ') !== 0) return null;
-        $token = substr($authHeader, 7);
+        $token = self::getBearerToken();
+        if (!$token) return null;
         $tm = new TokenModel();
         $user = $tm->getUserByToken($token);
         return $user ?: null;
