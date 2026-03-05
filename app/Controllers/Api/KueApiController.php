@@ -21,7 +21,6 @@ class KueApiController extends BaseApiController {
 
         foreach ($items as &$it) {
             $it['harga_formatted'] = number_format($it['harga'], 0, ',', '.');
-            // provide truncated description for list
             $it['deskripsi_truncated'] = mb_strimwidth($it['deskripsi'], 0, 120, '...');
         }
         unset($it);

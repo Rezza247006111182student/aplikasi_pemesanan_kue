@@ -53,7 +53,9 @@ switch ($resource) {
 
     case 'auth':
         $ctrl = new AuthApiController();
-        if ($method === 'POST' && isset($segments[3]) && $segments[3] === 'login') {
+        if ($method === 'POST' && isset($segments[3]) && $segments[3] === 'register') {
+            $ctrl->register();
+        } elseif ($method === 'POST' && isset($segments[3]) && $segments[3] === 'login') {
             $ctrl->login();
         } elseif ($method === 'POST' && isset($segments[3]) && $segments[3] === 'logout') {
             $ctrl->logout();
